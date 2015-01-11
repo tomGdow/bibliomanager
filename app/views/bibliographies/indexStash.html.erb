@@ -1,0 +1,125 @@
+<h1>Listing bibliographiest</h1>
+
+<button type="button" ng-click ="tomgdow()">Choose Selected!</button>
+<button type="button" ng-click ="tomgdow2()">Full List!</button>
+
+<div class=" col-partial4"> <!--search and sortby-->
+  <div class="row">
+    <div class="small-12 columns">
+      <dl class="sub-nav">
+        <dd>
+          <div class="searchBox">
+            <input id ="prodSearchInput"
+                   focus-on="focusMe"
+                   ng-model="search"/>
+          </div>
+        </dd>
+        <dd>
+          <select ng-model="orderProp" id = "sortBy" class = "dropdown">
+            <option value = "authors" ng-bind-html = "author"></option>
+            <option value = "-year" ng-bind-html = "year"></option>
+            <option value = "year" ng-bind-html = "yearalt"></option>
+            <option value = "selected" ng-bind-html = "selected"></option>
+            <option value = "-created_at" ng-bind-html = "productCreated_at"></option>
+            <option value = "-updated_at" ng-bind-html = "productUpdatedAt"></option>
+            <option value = "id" ng-bind-html = "productid"></option>
+            <option value = "-id" ng-bind-html = "productid2"></option>
+            <option value = "publication " ng-bind-html = "publicationtype"></option>
+          </select>
+        </dd>
+        <dd>
+          <span ng-show = "search.length>=2"
+                class = "echo_search_term">
+            <span class = "icon-search"></span>
+          <span >{{search}}</span></span>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+<div class="zero_search_wrapper">
+  <div class ="zero_search_items"
+       ng-if ="filteredBibliographies.length==0">
+  </div>
+</div>
+<div class="table_lge_wrapper">
+
+  <div  ng-init = "init(<%= @bibliographies.to_json %>);"></div>
+  <table ng-show ="filteredBibliographies.length>0">
+    <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th class = "tableColTwo">&nbsp;</th>
+      <th class = "tableColTwo">&nbsp;</th>
+      <th class = "tableColTwo">&nbsp; </th>
+      <th class = "tableColTwo">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody  ng-repeat="bibliography in filteredBibliographies = (bibliographies  | filter:search|orderBy:orderProp | limitTo:56)">
+
+    <tr>
+      <td ng-hide="!checked && thomas==true">
+        <span>{{bibliography.authors}}</span>
+        <span>({{bibliography.year}}) </span>
+        <span>{{bibliography.title}}</span>
+        <span ng-show="bibliography.publication==='Journal' ">{{bibliography.journalname}},</span>
+        <span ng-show="bibliography.publication==='Journal' ">{{bibliography.volume}},</span>
+        <span ng-show="bibliography.publication==='Journal' ">pp {{bibliography.pages}}.</span>
+        <span ng-show="bibliography.publication==='Book' && bibliography.edition != nil">{{bibliography.edition}}</span>
+        <span ng-show="bibliography.publication==='Book' && bibliography.editors != nil">({{bibliography.editors}}, editors). </span>
+        <span ng-show="bibliography.publication==='Book' && bibliography.publisher != nil">{{bibliography.publisher}},</span>
+        <span ng-show="bibliography.publication==='Book' && bibliography.city != nil">{{bibliography.city}}</span>
+        <span>[{{bibliography.publication}}<span ng-hide= "bibliography.comment== nil"> ({{bibliography.comment}})</span>]</span>
+        <span ng-hide= "bibliography.url == nil"><br/>Available at:
+        <a href="{{bibliography.url}}" target="_blank" >{{bibliography.url}}</a> </span>
+        <span ng-hide = "bibliography.accessdate == nil"><br/>Accessed: </span>
+        <span>{{bibliography.accessdate}}</span>
+        <span><br/>Id: {{bibliography.id}}</span>
+        <span>{{bibliography.publication}}</span>
+
+      </td>
+      <td ng-hide="!checked && thomas==true">        <span><input type="checkbox" ng-model ="checked">&nbsp;&nbsp;More&hellip;</span></td>
+    </tbody>
+  </table>
+  <ul ng-hide="!checked && thomas==true" ng-repeat="bibliography in filteredBibliographies = (bibliographies  | filter:search|orderBy:orderProp | limitTo:56)">
+    <li><span>{{bibliography.authors}}</span>
+      <span>({{bibliography.year}}) </span>
+      <span>{{bibliography.title}}</span>
+      <span ng-show="bibliography.publication==='Journal' ">{{bibliography.journalname}},</span>
+      <span ng-show="bibliography.publication==='Journal' ">{{bibliography.volume}},</span>
+      <span ng-show="bibliography.publication==='Journal' ">pp {{bibliography.pages}}.</span>
+      <span ng-show="bibliography.publication==='Book' && bibliography.edition != nil">{{bibliography.edition}}</span>
+      <span ng-show="bibliography.publication==='Book' && bibliography.editors != nil">({{bibliography.editors}}, editors). </span>
+      <span ng-show="bibliography.publication==='Book' && bibliography.publisher != nil">{{bibliography.publisher}},</span>
+      <span ng-show="bibliography.publication==='Book' && bibliography.city != nil">{{bibliography.city}}</span>
+      <span>[{{bibliography.publication}}<span ng-hide= "bibliography.comment== nil"> ({{bibliography.comment}})</span>]</span>
+        <span ng-hide= "bibliography.url == nil"><br/>Available at:
+        <a href="{{bibliography.url}}" target="_blank" >{{bibliography.url}}</a> </span>
+      <span ng-hide = "bibliography.accessdate == nil"><br/>Accessed: </span>
+      <span>{{bibliography.accessdate}}</span>
+      </li>
+    </ul>
+  <tr>
+    <th>Firstsurname</th>
+    <th>Authors</th>
+    <th>Year</th>
+    <th>Title</th>
+    <th>Journalname</th>
+  </tr>
+
+  <% @bibliographies.each do |bibliography| %>
+      <tr>
+
+        <td><%= bibliography.authors %></td>
+        <td><%= bibliography.year %></td>
+        <td><%= bibliography.title %></td>
+        <td><%= link_to 'Show', bibliography %></td>
+        <td><%= link_to 'Edit', edit_bibliography_path(bibliography) %></td>
+        <td><%= link_to 'Destroy', bibliography, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+  <% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Bibliography', new_bibliography_path %>
